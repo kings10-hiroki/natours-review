@@ -1,0 +1,48 @@
+export const displayMap = locations => {
+    mapboxgl.accessToken = 'pk.eyJ1IjoiOGhpcm9wb24iLCJhIjoiY2tmdnRuam5uMGQ3ajJ6bWt3c3k0amV1ZSJ9.3wbkFVioRCEj2Z8jZn7tGQ';
+
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v10',
+        scrollZoom: false
+        // center: [-118.5425706, 34.0471887],
+        // zoom: 10,
+        // interactive: false
+    });
+
+    // Language Japanese 
+    mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.1.0/mapbox-gl-rtl-text.js');
+    map.addControl(new MapboxLanguage({
+        defaultLanguage: 'ja'
+    }));
+
+    const bounds = new mapboxgl.LngLatBounds();
+
+    locations.forEach(loc => {
+        const el = document.createElement('div');
+        el.className = 'marker';
+
+        new mapboxgl.Marker({
+            element: el,
+            anchor: 'bottom'
+        }).setLngLat(loc.coordinates).addTo(map);
+
+        new mapboxgl.Popup({
+            offset: 30
+        }).setLngLat(loc.coordinates).setHTML(`<p>Day ${loc.day}: {loc.description}</p>`).addTo(map);
+
+        bounds.extend(loc.coordinates);
+    });
+
+    map.fitBounds(bounds, {
+        padding: {
+            top: 200,
+            bottom: 150,
+            left: 100,
+            right: 100
+        }
+    });
+}
+
+
+
